@@ -1,0 +1,26 @@
+{
+  "name": "tna-checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-dev": "ts-node src/index.ts",
+    "build": "tsc --skipLibCheck -p tsconfig.json",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^18.0.6"
+  },
+  "dependencies": {
+    "@discordjs/rest": "^1.0.0",
+    "chalk": "^4.1.2",
+    "discord-api-types": "^0.36.3",
+    "discord.js": "^14.0.3",
+    "express": "^4.17.1",
+    "googleapis": "^105.0.0",
+    "node-fetch": "2.0"
+  }
+}

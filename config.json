@@ -1,0 +1,29 @@
+{
+  "minecraft": {
+    "api_key": "6345e31f-5c8c-4315-b2ec-beb659f6a04b",
+    "bridge_bot_channel": "717496189096034339",
+    "role_request_channel": "717496189096034339",
+    "bonzo": 9000,
+    "livid": 10000,
+    "necron": 12250,
+    "elite": 15500
+  },
+  "discord": {
+    "channel": "837372933146935346",
+    "commandRole": "810428108427231232",
+    "ownerId": "331436891989868545",
+    "prefix": "!",
+    "messageMode": "bot",
+    "guildID": "810416482822782997",
+    "bonzoRole": "810435839616090122",
+    "lividRole": "810435008648445972",
+    "necronRole": "810434848917422080",
+    "eliteRole": "824933478021464065",
+    "discordStaff": "810428290598567966"
+  },
+  "express": {
+    "enabled": true,
+    "port": 8880,
+    "authorization": "authorizationHeaderString"
+  }
+}
