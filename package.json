@@ -8,6 +8,9 @@
     "build": "tsc --skipLibCheck -p tsconfig.json",
     "start": "tsc && node dist/index.js"
   },
+  "engines": {
+    "node": "18.x"
+  }
   "keywords": [],
   "author": "",
   "license": "ISC",
