@@ -35,7 +35,7 @@ class InteractionHandler {
             try {
                 console.log('Started refreshing application (/) commands.');
                 await rest.put(
-                    Routes.applicationGuildCommands(986257987482054666, 810416482822782997),
+                    Routes.applicationGuildCommands('986257987482054666', '810416482822782997'),
                     { body: this.slashCommandsRegister },
                 );
 
