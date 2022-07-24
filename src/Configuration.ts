@@ -30,9 +30,15 @@ class Configuration {
     }
 
     constructor() {
-        if (fs.existsSync('config.json')) {
-            this.properties = require('../config.json')
-            this.properties.discord.token = process.env.TOKEN
+        if (fs.existsSync('configProd.json')) {
+            if (process.env.NODE_ENV === 'production') {
+                this.properties = require('../configProd.json')
+                this.properties.discord.token = process.env.TOKEN
+            } else {
+                require('dotenv').config();
+                this.properties = require('../configDev.json')
+                this.properties.discord.token = process.env.TOKEN
+            }
         }
 
         for (let environment of Object.keys(process.env)) {

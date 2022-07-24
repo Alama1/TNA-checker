@@ -1,5 +1,5 @@
 const Application = require('../Application')
-const config = require('../../config.json')
+const config = require('../../configProd.json')
 
 class MinecraftManager {
     private app: typeof Application;

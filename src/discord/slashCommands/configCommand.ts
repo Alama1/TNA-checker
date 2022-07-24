@@ -14,7 +14,12 @@ class createButtonCommand {
     }
 
     async onCommand(interaction) {
-        let config = await JSON.parse(fs.readFileSync(path.resolve('./config.json'), 'utf-8'));
+        let config
+        if (process.env.NODE_ENV === 'production') {
+            config = await JSON.parse(fs.readFileSync(path.resolve('./configProd.json'), 'utf-8'));
+        } else {
+            config = await JSON.parse(fs.readFileSync(path.resolve('./configDev.json'), 'utf-8'));
+        }
         let replyEmbed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Done!')
@@ -52,9 +57,16 @@ class createButtonCommand {
             config.minecraft.elite = eliteReq
             changedProperties.push({name: 'Elite', value: eliteReq.toString()})
         }
-        fs.writeFile(path.resolve('./config.json'), JSON.stringify(config), function writeJSON(err) {
-            if (err) return console.log(err);
-        });
+        if (process.env.NODE_ENV === 'production') {
+            fs.writeFile(path.resolve('./configProd.json'), JSON.stringify(config), function writeJSON(err) {
+                if (err) return console.log(err);
+            });
+        } else {
+            fs.writeFile(path.resolve('./configDev.json'), JSON.stringify(config), function writeJSON(err) {
+                if (err) return console.log(err);
+            });
+        }
+
         replyEmbed
             .addFields(changedProperties)
         interaction.reply({ content: 'Boop!', embeds: [replyEmbed] })

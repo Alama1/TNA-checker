@@ -48,9 +48,9 @@ class ExpressManager {
             })
         }
         this.app.config.properties.minecraft.api_key = key
-        let config = await JSON.parse(fs.readFileSync('./config.json', 'utf-8'));
+        let config = await JSON.parse(fs.readFileSync('./configProd.json', 'utf-8'));
         config.minecraft.api_key = key
-        fs.writeFile('./config.json', JSON.stringify(config), function writeJSON(err) {
+        fs.writeFile('./configProd.json', JSON.stringify(config), function writeJSON(err) {
             if (err) return console.log(err);
         });
         return response.status(200).json({
