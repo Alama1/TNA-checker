@@ -47,18 +47,17 @@ class DiscordCheck {
                 )))
         let discordUsersInfo = []
         Array.from(allUsersWithWeightRoles.entries()).forEach((map, index) => {
-            if (index % 5 === 0) {
-                const progressEmbed = new EmbedBuilder()
-                    .setColor('#FFFF00')
-                    .setAuthor({ name: `Loading members. ${index + 1}/${allUsersWithWeightRoles.size}` })
-                interaction.editReply({
-                    embeds: [progressEmbed]
-                })
-            }
-
             let user = map[1]
             const nick = user.nickname ? user.nickname : user.user.username
             setTimeout(async () => {
+                if (index % 5 === 0) {
+                    const progressEmbed = new EmbedBuilder()
+                        .setColor('#FFFF00')
+                        .setAuthor({ name: `Loading members. ${index + 1}/${allUsersWithWeightRoles.size}` })
+                    interaction.editReply({
+                        embeds: [progressEmbed]
+                    })
+                }
                 const senitherProfile = await this.minecraftManager.getSenitherProfile(nick)
                 if (senitherProfile.status === 200) {
                     discordUsersInfo.push({username: nick, user: user, weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow })
