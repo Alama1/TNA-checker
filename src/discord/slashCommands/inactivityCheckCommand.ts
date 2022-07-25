@@ -43,6 +43,7 @@ class inactivityCheckCommand {
             }
             const userNamesHistory = await fetch(`https://api.mojang.com/user/profiles/${member.uuid}/names`).then(r => r.json()).catch(e => console.error(e))
             if (!userNamesHistory) return
+            if (!userNamesHistory[userNamesHistory.length - 1].name) return
             nickAndExpMembers.push({
                 name: userNamesHistory[userNamesHistory.length - 1].name,
                 expHistory: member.expHistory,
