@@ -30,7 +30,7 @@ class inactivityCheckCommand {
         let nickAndExpMembers = []
         let membersCount = 0
         for (const member of guildMembers) {
-            await this.timeout(500)
+            await this.timeout(100)
             if (member.rank === 'Guild Master' || member.rank === 'STAFF') continue
             membersCount++
             const membersProgress = new EmbedBuilder()
@@ -42,14 +42,13 @@ class inactivityCheckCommand {
                     embeds: [membersProgress]
                 })
             }
-            const userNamesHistory = await fetch(`https://api.mojang.com/user/profiles/${member.uuid}/names`)
+            const username = await fetch(`https://api.mojang.com/user/profile/${member.uuid}`)
                 .then(async r => await r.json())
                 .catch(e => console.log(e))
-            console.log(userNamesHistory)
-            if (!userNamesHistory) return
-            if (userNamesHistory.hasOwnProperty('error')) return
+            if (!username.hasOwnProperty('name')) continue
+            if (username.hasOwnProperty('error')) continue
             nickAndExpMembers.push({
-                name: userNamesHistory[userNamesHistory.length - 1].name,
+                name: username.name,
                 expHistory: member.expHistory,
                 daysInactive: 0
             })
