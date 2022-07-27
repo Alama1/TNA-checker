@@ -92,15 +92,17 @@ class RoleRequestButton {
             const necronReq = this.discord.app.config.properties.minecraft.necron
             const eliteReq = this.discord.app.config.properties.minecraft.elite
             let weightLeft
+            console.log(lividReq)
+            console.log(totalWeight)
             switch (relevantRole.name) {
                 case 'bonzo':
-                    weightLeft = `You need ${lividReq - totalWeight} more weight for the next rank.`
+                    weightLeft = `You need ${(lividReq - totalWeight).toFixed(0)} more weight for the next rank.`
                     break
                 case 'livid':
-                    weightLeft = `You need ${necronReq - totalWeight} more weight for the next rank.`
+                    weightLeft = `You need ${(necronReq - totalWeight).toFixed(0)} more weight for the next rank.`
                     break
                 case 'necron':
-                    weightLeft = `You need ${eliteReq - totalWeight} more weight for the next rank.`
+                    weightLeft = `You need ${(eliteReq - totalWeight).toFixed(0)} more weight for the next rank.`
                     break
                 case 'elite':
                     weightLeft = 'You need 177013 more weight for the next rank.'
