@@ -68,6 +68,7 @@ class DiscordCheck {
         })
     }
 
+
     async processMembers(membersList, interaction) {
         let membersToChange = []
         let returnFields = []

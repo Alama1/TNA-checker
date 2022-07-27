@@ -88,9 +88,26 @@ class RoleRequestButton {
         }
 
         if (userInGuild[0].rank.toLowerCase() === relevantRole.name.toLowerCase()) {
+            const lividReq = this.discord.app.config.properties.minecraft.livid
+            const necronReq = this.discord.app.config.properties.minecraft.necron
+            const eliteReq = this.discord.app.config.properties.minecraft.elite
+            let weightLeft
+            switch (relevantRole.name) {
+                case 'bonzo':
+                    weightLeft = `You need ${lividReq - totalWeight} more weight for the next rank.`
+                    break
+                case 'livid':
+                    weightLeft = `You need ${necronReq - totalWeight} more weight for the next rank.`
+                    break
+                case 'necron':
+                    weightLeft = `You need ${eliteReq - totalWeight} more weight for the next rank.`
+                    break
+                case 'elite':
+                    weightLeft = 'You need 177013 more weight for the next rank.'
+            }
             let rankAlreadyRelevant = new EmbedBuilder()
             rankAlreadyRelevant.setTitle('You already have relevant role!')
-            rankAlreadyRelevant.setDescription(`Current weight: ${totalWeight.toFixed(0)}. -100 social credit`)
+            rankAlreadyRelevant.setDescription(`Current weight: ${totalWeight.toFixed(0)}. -100 social credit \n ${weightLeft}`)
             rankAlreadyRelevant.setColor('#F04947')
             await interaction.editReply({
                 embeds: [rankAlreadyRelevant],
