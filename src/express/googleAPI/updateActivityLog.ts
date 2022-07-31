@@ -14,7 +14,7 @@ class UpdateActivityLog {
     async initialize() {
         let apiKeyAvailable = await fetch(`https://api.hypixel.net/key?key=${this.express.app.config.properties.minecraft.api_key}`)
             .then(async r => await r.json())
-        if (await apiKeyAvailable.status === 403) {
+        if (!apiKeyAvailable.success) {
             this.express.app.log.express('Api unavailable')
             let res = await fetch('https://h.jimmywashere.repl.co/api/apinew')
             if (res.success) {
@@ -24,7 +24,8 @@ class UpdateActivityLog {
         }
         const date = new Date()
         const guild = await fetch(`https://api.hypixel.net/guild?key=${this.express.app.config.properties.minecraft.api_key}&id=602915918ea8c9cb50ede5fd`)
-            .then(g => g.json())
+            .then(async g => await g.json())
+        console.log(guild)
         const guildMembers = guild.guild.members
         let nickAndExpMembers = {}
 
@@ -91,8 +92,18 @@ class UpdateActivityLog {
                 if(!userActivity) return
                 const todayExp = userActivity[Object.keys(userActivity)[0]]
                 const yesterdayExp = userActivity[Object.keys(userActivity)[1]]
+                const threeDaysAgoExp = userActivity[Object.keys(userActivity)[2]]
+                const fourDaysAgoExp = userActivity[Object.keys(userActivity)[3]]
+                const fiveDaysAgoExp = userActivity[Object.keys(userActivity)[4]]
+                const sixDaysAgoExp = userActivity[Object.keys(userActivity)[5]]
+                const sevenDaysAgoExp = userActivity[Object.keys(userActivity)[6]]
                 const todayDate = Object.keys(userActivity)[0].split('-').slice(-1)[0]
                 const yesterdayDate = Object.keys(userActivity)[1].split('-').slice(-1)[0]
+                const threeDaysAgoDate = Object.keys(userActivity)[2].split('-').slice(-1)[0]
+                const fourDaysAgoDate = Object.keys(userActivity)[3].split('-').slice(-1)[0]
+                const fiveDaysAgoDate = Object.keys(userActivity)[4].split('-').slice(-1)[0]
+                const sixDaysAgoDate = Object.keys(userActivity)[5].split('-').slice(-1)[0]
+                const sevenDaysAgoDate = Object.keys(userActivity)[6].split('-').slice(-1)[0]
                 setTimeout(() => {
                     googleSheets.spreadsheets.values.update({
                         spreadsheetId: this.spreadSheetID,
@@ -108,7 +119,47 @@ class UpdateActivityLog {
                             valueInputOption: 'USER_ENTERED',
                         })
                     }
-                }, index * 2000)
+                    if (parseInt(todayDate) > 2) {
+                        googleSheets.spreadsheets.values.update({
+                            spreadsheetId: this.spreadSheetID,
+                            range: `${date.getMonth() + 1}.${date.getFullYear()}!${this.intToChar(parseInt(threeDaysAgoDate))}${index + 3}`,
+                            requestBody: { values: [[threeDaysAgoExp]]},
+                            valueInputOption: 'USER_ENTERED',
+                        })
+                    }
+                    if (parseInt(todayDate) > 3) {
+                        googleSheets.spreadsheets.values.update({
+                            spreadsheetId: this.spreadSheetID,
+                            range: `${date.getMonth() + 1}.${date.getFullYear()}!${this.intToChar(parseInt(fourDaysAgoDate))}${index + 3}`,
+                            requestBody: { values: [[fourDaysAgoExp]]},
+                            valueInputOption: 'USER_ENTERED',
+                        })
+                    }
+                    if (parseInt(todayDate) > 4) {
+                        googleSheets.spreadsheets.values.update({
+                            spreadsheetId: this.spreadSheetID,
+                            range: `${date.getMonth() + 1}.${date.getFullYear()}!${this.intToChar(parseInt(fiveDaysAgoDate))}${index + 3}`,
+                            requestBody: { values: [[fiveDaysAgoExp]]},
+                            valueInputOption: 'USER_ENTERED',
+                        })
+                    }
+                    if (parseInt(todayDate) > 5) {
+                        googleSheets.spreadsheets.values.update({
+                            spreadsheetId: this.spreadSheetID,
+                            range: `${date.getMonth() + 1}.${date.getFullYear()}!${this.intToChar(parseInt(sixDaysAgoDate))}${index + 3}`,
+                            requestBody: { values: [[sixDaysAgoExp]]},
+                            valueInputOption: 'USER_ENTERED',
+                        })
+                    }
+                    if (parseInt(todayDate) > 6) {
+                        googleSheets.spreadsheets.values.update({
+                            spreadsheetId: this.spreadSheetID,
+                            range: `${date.getMonth() + 1}.${date.getFullYear()}!${this.intToChar(parseInt(sevenDaysAgoDate))}${index + 3}`,
+                            requestBody: { values: [[sevenDaysAgoExp]]},
+                            valueInputOption: 'USER_ENTERED',
+                        })
+                    }
+                }, index * 11000)
             })
         }, Object.keys(nickAndExpMembers).length * 1000 + 5000)
     }
