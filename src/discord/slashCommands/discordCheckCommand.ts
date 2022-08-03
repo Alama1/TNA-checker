@@ -53,7 +53,7 @@ class DiscordCheck {
                 if (index % 5 === 0) {
                     const progressEmbed = new EmbedBuilder()
                         .setColor('#FFFF00')
-                        .setAuthor({ name: `Loading members. ${index + 1}/${allUsersWithWeightRoles.size}` })
+                        .setAuthor({ name: `Loading members. ${index}/${allUsersWithWeightRoles.size}` })
                     interaction.editReply({
                         embeds: [progressEmbed]
                     })

@@ -81,7 +81,7 @@ class DiscordCheck {
         }
         for (const member of membersToChange) {
             const username = await this.minecraftManager.getMinecraftNameByUUID(member.uuid)
-            returnFields.push({ name: username, value: `Changed to ${member.realRank} \n Weight: ${member.weight}`, inline: true})
+            returnFields.push({ name: username, value: `Changed to ${member.realRank} \n Weight: ${member.weight.toFixed(0)}`, inline: true})
             bridgeBotChannel.send(`/setrank ${username} ${member.realRank}`)
         }
         const returnEmbed = new EmbedBuilder()
