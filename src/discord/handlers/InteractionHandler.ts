@@ -112,7 +112,8 @@ class InteractionHandler {
                 .setDescription('Api key is not available right now, try in a minute.')
                 .setColor('#F04947')
             interaction.reply({
-                embeds: [apiUnavailable]
+                embeds: [apiUnavailable],
+                ephemeral: true
             })
             return false
         }
@@ -122,7 +123,8 @@ class InteractionHandler {
                 .setDescription('Api key reached requests limit, wait a minute and try again.')
                 .setColor('#F04947')
             interaction.reply({
-                embeds: [apiUnavailable]
+                embeds: [apiUnavailable],
+                ephemeral: true
             })
             return false
         }
