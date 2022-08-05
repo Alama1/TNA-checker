@@ -20,9 +20,9 @@ class MinecraftManager {
     }
 
     async getMinecraftNameByUUID(UUID) {
-        const names = await fetch(`https://api.mojang.com/user/profiles/${UUID}/names`)
+        const nameAndID = await fetch(`https://api.mojang.com/user/profile/${UUID}`)
             .then(r => r.json())
-        return names[names.length - 1].name
+        return nameAndID.name
     }
 
     async fetchWithApiKey(link) {

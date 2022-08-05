@@ -19,6 +19,7 @@ class DiscordCheck {
     lividRole
     necronRole
     eliteRole
+    shouldRemoveRoles
 
     async onCommand(interaction) {
         this.bonzoRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.bonzoRole)
@@ -26,6 +27,7 @@ class DiscordCheck {
         this.necronRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.necronRole)
         this.eliteRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.eliteRole)
 
+        this.shouldRemoveRoles = interaction.options._hoistedOptions[0].value
         let allUsersWithWeightRoles
 
         const startedEmbed = new EmbedBuilder()
@@ -53,19 +55,23 @@ class DiscordCheck {
                 if (index % 5 === 0) {
                     const progressEmbed = new EmbedBuilder()
                         .setColor('#FFFF00')
-                        .setAuthor({ name: `Loading members. ${index}/${allUsersWithWeightRoles.size}` })
+                        .setAuthor({name: `Loading members. ${index}/${allUsersWithWeightRoles.size}`})
                     interaction.editReply({
                         embeds: [progressEmbed]
                     })
                 }
                 const senitherProfile = await this.minecraftManager.getSenitherProfile(nick)
                 if (senitherProfile.status === 200) {
-                    discordUsersInfo.push({username: nick, user: user, weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow })
+                    discordUsersInfo.push({
+                        username: nick,
+                        user: user,
+                        weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow
+                    })
                 }
                 if (index + 1 === allUsersWithWeightRoles.size) {
                     const progressEmbed = new EmbedBuilder()
                         .setColor('#FFFF00')
-                        .setAuthor({ name: `Done! Fixing player ranks...` })
+                        .setAuthor({name: `Done! Fixing player ranks...`})
                     interaction.editReply({
                         embeds: [progressEmbed]
                     })
@@ -75,24 +81,35 @@ class DiscordCheck {
         })
     }
 
-    processAllMembers(members, interaction) {
+    async processAllMembers(members, interaction) {
         let anyoneChanged = false
 
-        const returnEmbed = new EmbedBuilder()
+        const rolesChangedEmbed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Members check done!')
-            .setAuthor({ name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg' })
+            .setAuthor({name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg'})
             .setDescription('Here\'s all users that got changed')
             .setThumbnail('https://i.imgur.com/bdNxeHt.jpeg')
+
+        const rolesRemovedEmbed = new EmbedBuilder()
+            .setColor('#0099ff')
+            .setTitle('And also')
+            .setAuthor({name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg'})
+            .setDescription('Here\'s all users that got their roles removed because they are not in the guild anymore')
             .setTimestamp()
-        let returnFields = []
+        let rolesChangedFields = []
+        let rolesRemovedFields = []
 
         for (const member of members) {
             const userRoles = member.user._roles
             let realPlayerRank = this.getPlayerRank(member.weight)
             if (!member.user._roles.some(roles => roles === realPlayerRank.id)) {
                 anyoneChanged = true
-                returnFields.push({ name: member.username, value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`, inline: true})
+                rolesChangedFields.push({
+                    name: member.username,
+                    value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
+                    inline: true
+                })
                 member.user.roles.add(realPlayerRank)
             }
 
@@ -100,7 +117,11 @@ class DiscordCheck {
                 case this.bonzoRole.name:
                     if (userRoles.some(roles => roles === this.lividRole.id || roles === this.necronRole.id || roles === this.eliteRole.id)) {
                         anyoneChanged = true
-                        returnFields.push({ name: member.username, value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`, inline: true})
+                        rolesChangedFields.push({
+                            name: member.username,
+                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
+                            inline: true
+                        })
                         member.user.roles.add(realPlayerRank)
                         member.user.roles.remove(this.lividRole)
                         member.user.roles.remove(this.necronRole)
@@ -110,7 +131,11 @@ class DiscordCheck {
                 case this.lividRole.name:
                     if (userRoles.some(roles => roles === this.necronRole.id || roles === this.eliteRole.id)) {
                         anyoneChanged = true
-                        returnFields.push({ name: member.username, value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`, inline: true})
+                        rolesChangedFields.push({
+                            name: member.username,
+                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
+                            inline: true
+                        })
                         member.user.roles.remove(this.necronRole)
                         member.user.roles.remove(this.eliteRole)
                     }
@@ -118,15 +143,48 @@ class DiscordCheck {
                 case this.necronRole.name:
                     if (userRoles.some(roles => roles === this.eliteRole.id)) {
                         anyoneChanged = true
-                        returnFields.push({ name: member.username, value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`, inline: true})
+                        rolesChangedFields.push({
+                            name: member.username,
+                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
+                            inline: true
+                        })
                         member.user.roles.remove(this.eliteRole)
                     }
                     break
             }
         }
-        returnEmbed.addFields(returnFields)
+        const guild = await this.minecraftManager.getGuild()
+        const guildMembers = guild.guild.members
+        const guildNicknames = []
+        for (const member of guildMembers) {
+            const nick = await this.minecraftManager.getMinecraftNameByUUID(member.uuid)
+            if (!nick) continue
+            guildNicknames.push(nick)
+        }
+        const guildNicknamesInLowerCase = guildNicknames.map(name => name.toLowerCase())
+        for (let member of members) {
+            const ingameDiscordUsername = member.username
+            if (!guildNicknamesInLowerCase.includes(ingameDiscordUsername.toLowerCase()) && this.shouldRemoveRoles) {
+                rolesRemovedFields.push({
+                    name: ingameDiscordUsername,
+                    value: `All weight roles removed.`,
+                    inline: true
+                })
+
+                member.user.roles.remove(this.bonzoRole)
+                member.user.roles.remove(this.lividRole)
+                member.user.roles.remove(this.necronRole)
+                member.user.roles.remove(this.eliteRole)
+            }
+        }
+        const embedsToReturn = [rolesChangedEmbed]
+        if (this.shouldRemoveRoles) embedsToReturn.push(rolesRemovedEmbed)
+
+
+        rolesChangedEmbed.addFields(rolesChangedFields)
+        rolesRemovedEmbed.addFields(rolesRemovedFields)
         interaction.editReply({
-            embeds: [returnEmbed]
+            embeds: embedsToReturn
         })
     }
 
