@@ -31,7 +31,7 @@ class UpdateActivityLog {
 
         for (const member of guildMembers) {
             const userNamesHistory = await fetch(`https://api.mojang.com/user/profiles/${member.uuid}/names`)
-                .then(r => r.json())
+                .then(async r => await r.json())
                 .catch(e => console.error(e))
             if (!userNamesHistory) return
             nickAndExpMembers[userNamesHistory[userNamesHistory.length - 1].name] = member.expHistory
