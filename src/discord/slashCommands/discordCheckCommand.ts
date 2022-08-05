@@ -75,13 +75,14 @@ class DiscordCheck {
                     interaction.editReply({
                         embeds: [progressEmbed]
                     })
-                    this.processAllMembers(discordUsersInfo, interaction)
+                    this.processAllMembers(discordUsersInfo, interaction, allUsersWithWeightRoles)
                 }
             }, index * 1000)
         })
     }
 
-    async processAllMembers(members, interaction) {
+    async processAllMembers(members, interaction, allUsersWithWeightRoles) {
+        console.log(members)
         let anyoneChanged = false
 
         const rolesChangedEmbed = new EmbedBuilder()
@@ -162,20 +163,31 @@ class DiscordCheck {
             guildNicknames.push(nick)
         }
         const guildNicknamesInLowerCase = guildNicknames.map(name => name.toLowerCase())
+        let removedMembersCount = 0
         for (let member of members) {
             const ingameDiscordUsername = member.username
-            if (!guildNicknamesInLowerCase.includes(ingameDiscordUsername.toLowerCase()) && this.shouldRemoveRoles) {
+            if (removedMembersCount < 25) {
                 rolesRemovedFields.push({
                     name: ingameDiscordUsername,
-                    value: `All weight roles removed.`,
+                    value: `Is not in the guild anymore, but roles won't be removed.`,
                     inline: true
                 })
+            }
 
+            if (!guildNicknamesInLowerCase.includes(ingameDiscordUsername.toLowerCase()) && this.shouldRemoveRoles) {
+                if (removedMembersCount < 25) {
+                    rolesRemovedFields.push({
+                        name: ingameDiscordUsername,
+                        value: `All weight roles removed.`,
+                        inline: true
+                    })
+                }
                 member.user.roles.remove(this.bonzoRole)
                 member.user.roles.remove(this.lividRole)
                 member.user.roles.remove(this.necronRole)
                 member.user.roles.remove(this.eliteRole)
             }
+            removedMembersCount++
         }
         const embedsToReturn = [rolesChangedEmbed]
         if (this.shouldRemoveRoles) embedsToReturn.push(rolesRemovedEmbed)

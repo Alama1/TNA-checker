@@ -25,7 +25,6 @@ class UpdateActivityLog {
         const date = new Date()
         const guild = await fetch(`https://api.hypixel.net/guild?key=${this.express.app.config.properties.minecraft.api_key}&id=602915918ea8c9cb50ede5fd`)
             .then(async g => await g.json())
-        console.log(guild)
         const guildMembers = guild.guild.members
         let nickAndExpMembers = {}
 
