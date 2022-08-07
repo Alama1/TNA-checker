@@ -20,13 +20,14 @@ class createButtonCommand {
         } else {
             config = await JSON.parse(fs.readFileSync(path.resolve('./configDev.json'), 'utf-8'));
         }
+
         let replyEmbed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Done!')
             .setDescription('Fields that got changed:')
         let changedProperties = []
 
-        let apiKey = parseInt((interaction.fields.fields.get('apiKey')).value)
+        let apiKey = (interaction.fields.fields.get('apiKey')).value
         let bonzoReq = parseInt((interaction.fields.fields.get('bonzoReq')).value)
         let lividReq = parseInt((interaction.fields.fields.get('lividReq')).value)
         let necronReq = parseInt((interaction.fields.fields.get('necronReq')).value)
@@ -58,11 +59,11 @@ class createButtonCommand {
             changedProperties.push({name: 'Elite', value: eliteReq.toString()})
         }
         if (process.env.NODE_ENV === 'production') {
-            fs.writeFile(path.resolve('./configProd.json'), JSON.stringify(config), function writeJSON(err) {
+            fs.writeFileSync(path.resolve('./configProd.json'), JSON.stringify(config), function writeJSON(err) {
                 if (err) return console.log(err);
             });
         } else {
-            fs.writeFile(path.resolve('./configDev.json'), JSON.stringify(config), function writeJSON(err) {
+            fs.writeFileSync(path.resolve('./configDev.json'), JSON.stringify(config), function writeJSON(err) {
                 if (err) return console.log(err);
             });
         }

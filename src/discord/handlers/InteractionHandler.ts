@@ -73,7 +73,7 @@ class InteractionHandler {
             return
         }
 
-        if (interaction.commandName !== 'config' && interaction.commandName !== 'updatekey') {
+        if (interaction.customId !== 'configmodal' && interaction.commandName !== 'updatekey' && interaction.commandName !== 'config') {
             let api = await this.isApiAvailable(interaction)
             if (!api) return
         }
@@ -105,13 +105,25 @@ class InteractionHandler {
 
     async isApiAvailable(interaction) {
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
+        await interaction.deferReply()
         if (apiStatus === 403) {
-            await fetch('https://h.jimmywashere.repl.co/api/apinew').then(async r => await r.json())
+            try {
+                await fetch('https://h.jimmywashere.repl.co/api/apinew')
+            } catch (e) {
+                let apiUnavailable = new EmbedBuilder()
+                    .setTitle('API error')
+                    .setDescription('Api key is not available right now.')
+                    .setColor('#F04947')
+                interaction.editReply({
+                    embeds: [apiUnavailable],
+                    ephemeral: true
+                })
+            }
             let apiUnavailable = new EmbedBuilder()
                 .setTitle('API error')
                 .setDescription('Api key is not available right now, try in a minute.')
                 .setColor('#F04947')
-            interaction.reply({
+            interaction.editReply({
                 embeds: [apiUnavailable],
                 ephemeral: true
             })
@@ -122,7 +134,7 @@ class InteractionHandler {
                 .setTitle('API error')
                 .setDescription('Api key reached requests limit, wait a minute and try again.')
                 .setColor('#F04947')
-            interaction.reply({
+            interaction.editReply({
                 embeds: [apiUnavailable],
                 ephemeral: true
             })

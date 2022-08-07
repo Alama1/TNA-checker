@@ -82,7 +82,6 @@ class DiscordCheck {
     }
 
     async processAllMembers(members, interaction, allUsersWithWeightRoles) {
-        console.log(members)
         let anyoneChanged = false
 
         const rolesChangedEmbed = new EmbedBuilder()
@@ -166,13 +165,6 @@ class DiscordCheck {
         let removedMembersCount = 0
         for (let member of members) {
             const ingameDiscordUsername = member.username
-            if (removedMembersCount < 25) {
-                rolesRemovedFields.push({
-                    name: ingameDiscordUsername,
-                    value: `Is not in the guild anymore, but roles won't be removed.`,
-                    inline: true
-                })
-            }
 
             if (!guildNicknamesInLowerCase.includes(ingameDiscordUsername.toLowerCase()) && this.shouldRemoveRoles) {
                 if (removedMembersCount < 25) {
