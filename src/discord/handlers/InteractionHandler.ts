@@ -106,7 +106,9 @@ class InteractionHandler {
     async isApiAvailable(interaction) {
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
         if (apiStatus === 403) {
-            await interaction.deferReply()
+            await interaction.deferReply({
+                ephemeral: true
+            })
             try {
                 await fetch('https://h.jimmywashere.repl.co/api/apinew')
             } catch (e) {
