@@ -67,6 +67,14 @@ class MinecraftManager {
         return profiles.members[uuid.id]
     }
 
+    async getHypixelProfile(uuid) {
+        let profile = await this.fetchWithApiKey(`https://api.hypixel.net/player?uuid=${uuid}`)
+            .then(async r => await r.json())
+            .catch(e => this.app.log.error(e.message))
+        if (!profile.success) return false
+        return profile
+    }
+
     async checkApiKeyAvailability(): Promise<{ status: number }> {
         const isAvailable = await this.fetchWithApiKey(`https://api.hypixel.net/key`)
             .catch(e => this.app.log.error(e.message))

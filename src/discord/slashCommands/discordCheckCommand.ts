@@ -1,3 +1,5 @@
+import {webcrypto} from "crypto";
+
 const interactionHandler = require('../handlers/InteractionHandler')
 const minecraftManager = require('../../minecraft/minecraftManager')
 const fetch = require('node-fetch')
@@ -22,13 +24,19 @@ class DiscordCheck {
     shouldRemoveRoles
 
     async onCommand(interaction) {
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+
         this.bonzoRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.bonzoRole)
         this.lividRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.lividRole)
         this.necronRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.necronRole)
         this.eliteRole = await interaction.guild.roles.fetch(this.discord.app.config.properties.discord.eliteRole)
 
         this.shouldRemoveRoles = interaction.options._hoistedOptions[0].value
-        let allUsersWithWeightRoles
+        let allDiscordUsersWithWeightRoles
+        let allDiscordUsers
+
+        let guild = await this.minecraftManager.getGuild()
+        const guildMembers = guild.guild.members
 
         const startedEmbed = new EmbedBuilder()
             .setTitle('Beep')
@@ -40,153 +48,121 @@ class DiscordCheck {
 
         await interaction.guild.members
             .fetch()
-            .then((members) =>
-                allUsersWithWeightRoles = members.filter(m => m._roles.some(role =>
+            .then((members) => {
+                allDiscordUsers = Array.from(members)
+                allDiscordUsersWithWeightRoles = members.filter(m => m._roles.some(role =>
                     role === this.bonzoRole.id ||
                     role === this.lividRole.id ||
                     role === this.necronRole.id ||
                     role === this.eliteRole.id
-                )))
-        let discordUsersInfo = []
-        Array.from(allUsersWithWeightRoles.entries()).forEach((map, index) => {
-            let user = map[1]
-            const nick = user.nickname ? user.nickname : user.user.username
-            setTimeout(async () => {
-                if (index % 5 === 0) {
-                    const progressEmbed = new EmbedBuilder()
-                        .setColor('#FFFF00')
-                        .setAuthor({name: `Loading members. ${index}/${allUsersWithWeightRoles.size}`})
-                    interaction.editReply({
-                        embeds: [progressEmbed]
-                    })
-                }
-                const senitherProfile = await this.minecraftManager.getSenitherProfile(nick)
-                if (senitherProfile.status === 200) {
-                    discordUsersInfo.push({
-                        username: nick,
-                        user: user,
-                        weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow
-                    })
-                }
-                if (index + 1 === allUsersWithWeightRoles.size) {
-                    const progressEmbed = new EmbedBuilder()
-                        .setColor('#FFFF00')
-                        .setAuthor({name: `Done! Fixing player ranks...`})
-                    interaction.editReply({
-                        embeds: [progressEmbed]
-                    })
-                    this.processAllMembers(discordUsersInfo, interaction, allUsersWithWeightRoles)
-                }
-            }, index * 1000)
+                ))
+            })
+
+        let allPlayersInfo = []
+        let allowedDiscords = []
+        let index = 0
+        for (const member of guildMembers) {
+            index++
+            const loadingMembersEmbed = new EmbedBuilder()
+                .setTitle('Loading guild members profiles...')
+                .setDescription(`${index}/${guildMembers.length}`)
+                .setColor('#FFFF00')
+            if (index%5 === 0) {
+                interaction.editReply({
+                    embeds: [loadingMembersEmbed]
+                })
+            }
+            let senitherProfile = await this.minecraftManager.getSenitherProfileWithUUID(member.uuid)
+            let hypixelProfile = await this.minecraftManager.getHypixelProfile(member.uuid)
+            if (!hypixelProfile.player.hasOwnProperty('socialMedia')) {
+                continue
+            }
+            const discordLink = hypixelProfile.player.socialMedia.links.DISCORD ?? 'none#none'
+            if (!hypixelProfile.player.socialMedia.links.DISCORD) {
+
+            }
+            const weight = senitherProfile.data.weight + senitherProfile.data.weight_overflow
+            allowedDiscords.push(discordLink.split('#')[0])
+            allPlayersInfo.push({uuid: member.uuid, weight: weight, rank: member.rank, discord: discordLink})
+            await wait(2000)
+        }
+
+        const loadingFinishedEmbed = new EmbedBuilder()
+            .setTitle('Loading finished...')
+            .setDescription('Fixing ranks')
+            .setColor('#FFFF00')
+        interaction.editReply({
+            embeds: [loadingFinishedEmbed]
         })
-    }
 
-    async processAllMembers(members, interaction, allUsersWithWeightRoles) {
-        let anyoneChanged = false
+        let membersChangedArray = []
 
-        const rolesChangedEmbed = new EmbedBuilder()
+        allDiscordUsers.forEach(member => {
+            const found = allPlayersInfo.some(item => item.discord.split('#')[0] === member[1].user.username)
+            if (found) {
+                let profile = allPlayersInfo.find(item => item.discord.split('#')[0] === member[1].user.username)
+                let relevantRole = this.getPlayerRank(profile.weight)
+                if (!member[1]._roles.includes(relevantRole.id)) {
+                    member[1].roles.add(relevantRole.id)
+                    membersChangedArray.push(
+                        { name: member[1].user.username, value: `${relevantRole.name} added`, inline: true})
+                }
+                switch (relevantRole.name.toLowerCase()) {
+                    case 'bonzo':
+                        member[1].roles.remove(this.lividRole.id)
+                        member[1].roles.remove(this.necronRole.id)
+                        member[1].roles.remove(this.eliteRole.id)
+                        break
+                    case 'livid':
+                        member[1].roles.remove(this.necronRole.id)
+                        member[1].roles.remove(this.eliteRole.id)
+                        break
+                    case 'necron':
+                        member[1].roles.remove(this.eliteRole.id)
+                        break
+                    case 'elite':
+                        break
+                    default:
+                        break
+                }
+            } else {
+                let weightRolesThatUserHas = member[1]._roles.some(role =>
+                    role === this.bonzoRole.id ||
+                    role === this.lividRole.id ||
+                    role === this.necronRole.id ||
+                    role === this.eliteRole.id)
+                if (weightRolesThatUserHas) {
+                    member[1].roles.remove(this.bonzoRole.id)
+                    member[1].roles.remove(this.lividRole.id)
+                    member[1].roles.remove(this.necronRole.id)
+                    member[1].roles.remove(this.eliteRole.id)
+                    membersChangedArray.push(
+                        { name: member[1].user.username, value: `All weight roles removed`, inline: true})
+                }
+            }
+        })
+        const returnEmbed = new EmbedBuilder()
             .setColor('#0099ff')
             .setTitle('Members check done!')
-            .setAuthor({name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg'})
+            .setAuthor({ name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg' })
             .setDescription('Here\'s all users that got changed')
             .setThumbnail('https://i.imgur.com/bdNxeHt.jpeg')
-
-        const rolesRemovedEmbed = new EmbedBuilder()
-            .setColor('#0099ff')
-            .setTitle('And also')
-            .setAuthor({name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg'})
-            .setDescription('Here\'s all users that got their roles removed because they are not in the guild anymore')
             .setTimestamp()
-        let rolesChangedFields = []
-        let rolesRemovedFields = []
 
-        for (const member of members) {
-            const userRoles = member.user._roles
-            let realPlayerRank = this.getPlayerRank(member.weight)
-            if (!member.user._roles.some(roles => roles === realPlayerRank.id)) {
-                anyoneChanged = true
-                rolesChangedFields.push({
-                    name: member.username,
-                    value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
-                    inline: true
-                })
-                member.user.roles.add(realPlayerRank)
-            }
-
-            switch (realPlayerRank.name) {
-                case this.bonzoRole.name:
-                    if (userRoles.some(roles => roles === this.lividRole.id || roles === this.necronRole.id || roles === this.eliteRole.id)) {
-                        anyoneChanged = true
-                        rolesChangedFields.push({
-                            name: member.username,
-                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
-                            inline: true
-                        })
-                        member.user.roles.add(realPlayerRank)
-                        member.user.roles.remove(this.lividRole)
-                        member.user.roles.remove(this.necronRole)
-                        member.user.roles.remove(this.eliteRole)
-                    }
-                    break
-                case this.lividRole.name:
-                    if (userRoles.some(roles => roles === this.necronRole.id || roles === this.eliteRole.id)) {
-                        anyoneChanged = true
-                        rolesChangedFields.push({
-                            name: member.username,
-                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
-                            inline: true
-                        })
-                        member.user.roles.remove(this.necronRole)
-                        member.user.roles.remove(this.eliteRole)
-                    }
-                    break
-                case this.necronRole.name:
-                    if (userRoles.some(roles => roles === this.eliteRole.id)) {
-                        anyoneChanged = true
-                        rolesChangedFields.push({
-                            name: member.username,
-                            value: `Weight: ${member.weight.toFixed(0)} \n Relevant role: ${realPlayerRank.name}`,
-                            inline: true
-                        })
-                        member.user.roles.remove(this.eliteRole)
-                    }
-                    break
-            }
+        const secondEmbed = new EmbedBuilder()
+            .setColor('#0099ff')
+            .setTitle('Second list')
+            .setAuthor({ name: 'TNA', iconURL: 'https://i.imgur.com/bdNxeHt.jpeg' })
+            .setDescription('Here\'s some more users')
+        let embedsToReturn = [returnEmbed]
+        if (membersChangedArray.length > 20) {
+            const secondPart = membersChangedArray.splice(21)
+            returnEmbed.addFields(membersChangedArray)
+            secondEmbed.addFields(secondPart)
+            embedsToReturn.push(secondEmbed)
+        } else {
+            returnEmbed.addFields(membersChangedArray)
         }
-        const guild = await this.minecraftManager.getGuild()
-        const guildMembers = guild.guild.members
-        const guildNicknames = []
-        for (const member of guildMembers) {
-            const nick = await this.minecraftManager.getMinecraftNameByUUID(member.uuid)
-            if (!nick) continue
-            guildNicknames.push(nick)
-        }
-        const guildNicknamesInLowerCase = guildNicknames.map(name => name.toLowerCase())
-        let removedMembersCount = 0
-        for (let member of members) {
-            const ingameDiscordUsername = member.username
-
-            if (!guildNicknamesInLowerCase.includes(ingameDiscordUsername.toLowerCase()) && this.shouldRemoveRoles) {
-                if (removedMembersCount < 25) {
-                    rolesRemovedFields.push({
-                        name: ingameDiscordUsername,
-                        value: `All weight roles removed.`,
-                        inline: true
-                    })
-                }
-                member.user.roles.remove(this.bonzoRole)
-                member.user.roles.remove(this.lividRole)
-                member.user.roles.remove(this.necronRole)
-                member.user.roles.remove(this.eliteRole)
-            }
-            removedMembersCount++
-        }
-        const embedsToReturn = [rolesChangedEmbed]
-        if (this.shouldRemoveRoles) embedsToReturn.push(rolesRemovedEmbed)
-
-
-        rolesChangedEmbed.addFields(rolesChangedFields)
-        rolesRemovedEmbed.addFields(rolesRemovedFields)
         interaction.editReply({
             embeds: embedsToReturn
         })
