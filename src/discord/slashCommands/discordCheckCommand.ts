@@ -98,6 +98,7 @@ class DiscordCheck {
         let membersChangedArray = []
 
         allDiscordUsers.forEach(member => {
+            const nick = member[1].nickname ? member[1].nickname : member[1].user.username
             const found = allPlayersInfo.some(item => item.discord.split('#')[0] === member[1].user.username)
             if (found) {
                 let profile = allPlayersInfo.find(item => item.discord.split('#')[0] === member[1].user.username)
@@ -105,7 +106,7 @@ class DiscordCheck {
                 if (!member[1]._roles.includes(relevantRole.id)) {
                     member[1].roles.add(relevantRole.id)
                     membersChangedArray.push(
-                        { name: member[1].user.username, value: `${relevantRole.name} added`, inline: true})
+                        { name: nick, value: `${relevantRole.name} role added`, inline: true})
                 }
                 switch (relevantRole.name.toLowerCase()) {
                     case 'bonzo':
@@ -137,7 +138,7 @@ class DiscordCheck {
                     member[1].roles.remove(this.necronRole.id)
                     member[1].roles.remove(this.eliteRole.id)
                     membersChangedArray.push(
-                        { name: member[1].user.username, value: `All weight roles removed`, inline: true})
+                        { name: nick, value: `All weight roles removed`, inline: true})
                 }
             }
         })
