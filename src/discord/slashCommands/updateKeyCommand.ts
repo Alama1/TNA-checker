@@ -14,7 +14,7 @@ class inactivityCheckCommand {
     async onCommand(interaction) {
         await interaction.deferReply()
         try {
-            const res = await fetch('https://h.jimmywashere.repl.co/api/apinew').then(async r => await r.json())
+            const res = await fetch('https://tna-bridge.herokuapp.com/api/apinew').then(async r => await r.json())
             if (res.success === true) {
                 const returnEmbed = new EmbedBuilder()
                 returnEmbed
