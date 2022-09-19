@@ -30,6 +30,7 @@ class Configuration {
     }
 
     constructor() {
+        console.log(process.env.port)
         if (fs.existsSync('configProd.json')) {
             if (process.env.NODE_ENV === 'production') {
                 this.properties = require('../configProd.json')
