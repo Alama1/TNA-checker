@@ -51,7 +51,7 @@ class MinecraftManager {
     async getSenitherProfile(username) {
         const uuid = await this.getMinecraftUUID(username)
         if (!uuid) return false
-        return this.fetchWithApiKey(`https://hypixel-api.senither.com/v1/profiles/${uuid.id}/weight`)
+        return this.fetchWithApiKey(`https://hypixel-skyblock-facade.alamai.repl.co/v1/profiles/${uuid.id}/weight`)
             .then(async r => await r.json())
             .catch(e => this.app.log.error(e.message))
     }
