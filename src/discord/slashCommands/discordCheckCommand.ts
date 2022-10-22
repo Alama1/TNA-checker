@@ -73,7 +73,7 @@ class DiscordCheck {
                 })
             }
             let senitherProfile = await this.minecraftManager.getSenitherProfileWithUUID(member.uuid)
-            let hypixelProfile = await this.minecraftManager.getHypixelProfile(member.uuid)
+            let hypixelProfile = await this.minecraftManager.getHypixelProfiles(member.uuid)
             if (!hypixelProfile.player.hasOwnProperty('socialMedia')) {
                 continue
             }

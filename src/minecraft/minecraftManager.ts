@@ -67,8 +67,16 @@ class MinecraftManager {
         return profiles.members[uuid.id]
     }
 
-    async getHypixelProfile(uuid) {
+    async getHypixelProfiles(uuid) {
         let profile = await this.fetchWithApiKey(`https://api.hypixel.net/player?uuid=${uuid}`)
+            .then(async r => await r.json())
+            .catch(e => this.app.log.error(e.message))
+        if (!profile.success) return false
+        return profile
+    }
+
+    async getHypixelProfile(profileUUID) {
+        let profile = await this.fetchWithApiKey(`https://api.hypixel.net/skyblock/profile?profile=${profileUUID}`)
             .then(async r => await r.json())
             .catch(e => this.app.log.error(e.message))
         if (!profile.success) return false

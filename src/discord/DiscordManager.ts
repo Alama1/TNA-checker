@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 const StateHandler = require('./handlers/StateHandler')
 const InteractionHandler = require('./handlers/InteractionHandler')
 const ButtonHandler = require('./handlers/ButtonHandler')
@@ -8,10 +11,12 @@ class DiscordManager  {
     private client: typeof Client;
     private interactionHandler: typeof InteractionHandler;
     private buttonHandler: typeof ButtonHandler;
+    cataLevelExp: Object
     constructor(app) {
 
         this.app = app
         this.stateHandler = new StateHandler(this)
+        this.cataLevelExp = JSON.parse(fs.readFileSync(path.resolve('./catacombsExpNeeded.json'), { encoding: 'utf-8'}))
     }
 
     connect() {
