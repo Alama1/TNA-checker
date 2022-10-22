@@ -16,7 +16,7 @@ class UpdateActivityLog {
             .then(async r => await r.json())
         if (!apiKeyAvailable.success) {
             this.express.app.log.express('Api unavailable')
-            let res = await fetch('https://tna-bridge.herokuapp.com/api/apinew')
+            let res = await fetch('http://78.137.0.174:8880/api/apinew')
             if (res.success) {
                 this.initialize()
             }
