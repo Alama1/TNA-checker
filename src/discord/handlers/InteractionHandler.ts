@@ -91,7 +91,7 @@ class InteractionHandler {
     }
 
     canInteract(interaction) {
-        return (this.isCommander(interaction) || this.isOwner(interaction))
+        return (this.isCommander(interaction) || this.isOwner(interaction) || this.allowedCommands(interaction))
     }
 
     isCommander(interaction) {
@@ -101,6 +101,10 @@ class InteractionHandler {
 
     isOwner(interaction) {
         return interaction.member.id === this.discord.app.config.properties.discord.ownerId
+    }
+
+    allowedCommands(interaction) {
+        return interaction.commandName === 'meet'
     }
 
     async isApiAvailable(interaction) {
