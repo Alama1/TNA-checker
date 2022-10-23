@@ -69,50 +69,82 @@ class createButtonCommand {
 
         replyEmbed
             .addFields(changedProperties)
+            .setDescription(`Weight: ${weight.toFixed(0)}`)
 
-        const weightReq = this.discord.app.config.properties.minecraft.bonzo
-        if (weight > weightReq) {
-            changedProperties.push({name: 'Requirements', value: 'Weight: :white_check_mark:'})
+        const bonzoReq = this.discord.app.config.properties.minecraft.bonzo
+        const lividReq = this.discord.app.config.properties.minecraft.livid
+        const necronReq = this.discord.app.config.properties.minecraft.necron
+        const eliteReq = this.discord.app.config.properties.minecraft.elite
+        let rolesMet = ''
+        if (weight > bonzoReq) {
             hasPassed = true
-        } else {
-            changedProperties.push({name: 'Requirements', value: 'Weight: :o:'})
         }
+
+        if (weight > bonzoReq) {
+            rolesMet += 'Bonzo: :white_check_mark:\n'
+        } else {
+            rolesMet += 'Bonzo: :o:\n'
+        }
+        if (weight > lividReq) {
+            rolesMet += 'Livid: :white_check_mark:\n'
+        } else {
+            rolesMet += 'Livid: :o:\n'
+        }
+        if (weight > necronReq) {
+            rolesMet += 'Necron: :white_check_mark:\n'
+        } else {
+            rolesMet += 'Necron: :o:\n'
+        }
+        if (weight > eliteReq) {
+            rolesMet += 'Elite: :white_check_mark:\n'
+        } else {
+            rolesMet += 'Elite: :o:\n'
+        }
+        changedProperties.push({name: 'Requirements', value: rolesMet})
+
 
         let bypasses = ''
         if (skillAvg > 50) {
-            bypasses += 'Skill avg: :white_check_mark: \n'
+            bypasses += `Skill avg (${skillAvg}/50): :white_check_mark: \n`
             hasPassed = true
         } else {
-            bypasses += 'Skill avg: :o: \n'
+            bypasses += `Skill avg (${skillAvg}/50): :o: \n`
         }
-
         if (cataLevel > 42) {
-            bypasses += 'Cata lvl: :white_check_mark: \n'
+            bypasses += `Cata lvl (${cataLevel}/42): :white_check_mark: \n`
             hasPassed = true
         } else {
-            bypasses += 'Cata lvl: :o: \n'
+            bypasses += `Cata lvl (${cataLevel}/42): :o: \n`
         }
 
         if (slayersExp > 8000000) {
-            bypasses += 'Slayers exp: :white_check_mark: \n'
+            bypasses += `Slayers exp (${this.numFormatter(slayersExp)}/8M): :white_check_mark: \n`
             hasPassed = true
         } else {
-            bypasses += 'Slayers exp: :o: \n'
+            bypasses += `Slayers exp (${this.numFormatter(slayersExp)}/8M): :o: \n`
         }
 
         changedProperties.push({name: 'Bypasses', value: bypasses})
 
         if (hasPassed) {
             replyEmbed.setColor('#0099ff')
-                .setDescription('Passed')
         } else {
             replyEmbed.setColor('#cc1b1b')
-                .setDescription('Not passed :(')
         }
         console.log(hasPassed)
 
         interaction.editReply({embeds: [replyEmbed]})
     }
+    numFormatter(num) {
+        if(num > 999 && num < 1000000){
+            return (num/1000).toFixed(1) + 'K'
+        }else if(num > 1000000){
+            return (num/1000000).toFixed(1) + 'M'
+        }else if(num < 900){
+            return num
+        }
+    }
+
 }
 
 
