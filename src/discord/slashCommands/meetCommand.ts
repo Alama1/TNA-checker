@@ -80,22 +80,22 @@ class createButtonCommand {
             hasPassed = true
         }
 
-        if (weight > bonzoReq) {
+        if (weight >= bonzoReq) {
             rolesMet += 'Bonzo: :white_check_mark:\n'
         } else {
             rolesMet += 'Bonzo: :o:\n'
         }
-        if (weight > lividReq) {
+        if (weight >= lividReq) {
             rolesMet += 'Livid: :white_check_mark:\n'
         } else {
             rolesMet += 'Livid: :o:\n'
         }
-        if (weight > necronReq) {
+        if (weight >= necronReq) {
             rolesMet += 'Necron: :white_check_mark:\n'
         } else {
             rolesMet += 'Necron: :o:\n'
         }
-        if (weight > eliteReq) {
+        if (weight >= eliteReq) {
             rolesMet += 'Elite: :white_check_mark:\n'
         } else {
             rolesMet += 'Elite: :o:\n'
@@ -104,20 +104,20 @@ class createButtonCommand {
 
 
         let bypasses = ''
-        if (skillAvg > 50) {
+        if (skillAvg >= 50) {
             bypasses += `Skill avg (${skillAvg}/50): :white_check_mark: \n`
             hasPassed = true
         } else {
             bypasses += `Skill avg (${skillAvg}/50): :o: \n`
         }
-        if (cataLevel > 42) {
+        if (cataLevel >= 42) {
             bypasses += `Cata lvl (${cataLevel}/42): :white_check_mark: \n`
             hasPassed = true
         } else {
             bypasses += `Cata lvl (${cataLevel}/42): :o: \n`
         }
 
-        if (slayersExp > 8000000) {
+        if (slayersExp >= 8000000) {
             bypasses += `Slayers exp (${this.numFormatter(slayersExp)}/8M): :white_check_mark: \n`
             hasPassed = true
         } else {
