@@ -114,7 +114,7 @@ class InteractionHandler {
                 ephemeral: true
             })
             try {
-                await fetch('http://78.137.0.174:8880/api/apinew')
+                await fetch('https://tna-bridge.herokuapp.com/api/apinew')
             } catch (e) {
                 let apiUnavailable = new EmbedBuilder()
                     .setTitle('API error')
