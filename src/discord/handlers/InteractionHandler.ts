@@ -80,6 +80,7 @@ class InteractionHandler {
 
         if (interaction.customId !== 'configmodal' && interaction.commandName !== 'updatekey' && interaction.commandName !== 'config') {
             let api = await this.isApiAvailable(interaction)
+            console.log(api)
             if (!api) return
         }
 
@@ -121,7 +122,6 @@ class InteractionHandler {
                 if (res.success) {
                     setTimeout(async () => {
                         const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
-                        console.log(newApiStatus)
                         if (newApiStatus === 200) {
                             return true
                         } else {
