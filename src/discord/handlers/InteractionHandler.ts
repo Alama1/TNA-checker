@@ -122,12 +122,13 @@ class InteractionHandler {
         }
 
         if (apiStatus === 403) {
+            let success = false
             try {
                 await fetch(this.discord.app.config.properties.discord.apiNewURL)
                     .then(async r => {
                         const res = await r.json()
                         if (res.success) {
-                            return true
+                            success = true
                         }
                     })
             } catch (e) {
@@ -139,15 +140,15 @@ class InteractionHandler {
                     embeds: [apiUnavailable],
                     ephemeral: true
                 })
-                return false
             }
+            return success
         }
         if (apiStatus === 429) {
             let apiUnavailable = new EmbedBuilder()
                 .setTitle('API error')
                 .setDescription('Api key reached requests limit, wait a minute and try again.')
                 .setColor('#F04947')
-            interaction.editReply({
+            await interaction.editReply({
                 embeds: [apiUnavailable],
                 ephemeral: true
             })
