@@ -121,7 +121,7 @@ class InteractionHandler {
                 if (res.success) {
                     setTimeout(async () => {
                         const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
-                        if (newApiStatus.status === 200) {
+                        if (newApiStatus === 200) {
                             return true
                         }
                     }, 2000)
