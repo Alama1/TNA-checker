@@ -81,7 +81,6 @@ class InteractionHandler {
 
         if (interaction.customId !== 'configmodal' && interaction.commandName !== 'updatekey' && interaction.commandName !== 'config') {
             let api = await this.isApiAvailable(interaction)
-            console.log(api)
             if (!api) return
         }
 
@@ -113,6 +112,7 @@ class InteractionHandler {
     allowedCommands(interaction) {
         return interaction.commandName === 'meet'
     }
+    delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
     async isApiAvailable(interaction) {
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
@@ -141,6 +141,7 @@ class InteractionHandler {
                     ephemeral: true
                 })
             }
+            await this.delay(2000)
             return success
         }
         if (apiStatus === 429) {
