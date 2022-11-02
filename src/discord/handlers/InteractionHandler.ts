@@ -47,9 +47,11 @@ class InteractionHandler {
     }
 
     async onInteraction(interaction) {
-        await interaction.deferReply({
-            ephemeral: true
-        })
+        if (interaction.customId !== 'configmodal' && interaction.customId !== 'config') {
+            await interaction.deferReply({
+                ephemeral: true
+            })
+        }
         switch (interaction.type) {
             case InteractionType.ApplicationCommand:
                 break
