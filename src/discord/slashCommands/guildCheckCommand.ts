@@ -37,7 +37,7 @@ class DiscordCheck {
             .setDescription('Boop')
             .setColor('#FFFF00')
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [startedEmbed]
         })
 

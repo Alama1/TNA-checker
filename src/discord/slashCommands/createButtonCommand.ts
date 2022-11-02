@@ -37,7 +37,7 @@ class createButtonCommand {
                         .setStyle(ButtonStyle.Primary),
                 );
             interaction.channel.send({ content: text2, components: [row] })
-            interaction.reply({ content: `Done!`, ephemeral: true })
+            interaction.editReply({ content: `Done!`, ephemeral: true })
         }
     }
 }

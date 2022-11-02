@@ -37,7 +37,7 @@ class ButtonsHandler {
                         .setColor('#DC143C')
                         .setTitle(`Permission denied!`)
                         .setDescription('You need to have any weight role to press that!')
-                    await interaction.reply({
+                    await interaction.editReply({
                         embeds: [replyEmbed],
                         ephemeral: true
                     })

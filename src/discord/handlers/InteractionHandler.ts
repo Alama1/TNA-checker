@@ -47,6 +47,9 @@ class InteractionHandler {
     }
 
     async onInteraction(interaction) {
+        await interaction.deferReply({
+            ephemeral: true
+        })
         switch (interaction.type) {
             case InteractionType.ApplicationCommand:
                 break
@@ -66,7 +69,7 @@ class InteractionHandler {
                 .setColor('#DC143C')
                 .setTitle(`Permission denied!`)
                 .setDescription('Only staff members can use that!')
-            interaction.reply({
+            interaction.editReply({
                 embeds: [cannotInteractEmbed],
                 ephemeral: true
             })
@@ -110,11 +113,12 @@ class InteractionHandler {
     async isApiAvailable(interaction) {
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
         if (apiStatus === 403) {
-            await interaction.deferReply({
-                ephemeral: true
-            })
             try {
-                await fetch('https://tna-bridge.herokuapp.com/api/apinew')
+                const res = await fetch(this.discord.app.config.properties.discord.apiNewURL)
+                    .then(async r => await r.json())
+                if (res.success) {
+                    return true
+                }
             } catch (e) {
                 let apiUnavailable = new EmbedBuilder()
                     .setTitle('API error')
@@ -125,15 +129,6 @@ class InteractionHandler {
                     ephemeral: true
                 })
             }
-            let apiUnavailable = new EmbedBuilder()
-                .setTitle('API error')
-                .setDescription('Api key is not available right now, try in a minute.')
-                .setColor('#F04947')
-            interaction.editReply({
-                embeds: [apiUnavailable],
-                ephemeral: true
-            })
-            return false
         }
         if (apiStatus === 429) {
             let apiUnavailable = new EmbedBuilder()

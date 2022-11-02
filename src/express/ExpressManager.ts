@@ -1,5 +1,4 @@
 const express = require('express')
-const activityLog = require('./googleAPI/updateActivityLog')
 const fs = require('fs')
 const fetch = require('node-fetch')
 export {}
@@ -9,12 +8,10 @@ class ExpressManager {
     private app: any;
     private express: typeof express;
     private router: typeof express.Router;
-    private activityLog: typeof activityLog;
     constructor(app) {
         this.app = app
         this.express = express()
         this.router = express.Router()
-        this.activityLog = activityLog
     }
 
     initialize() {
@@ -22,7 +19,6 @@ class ExpressManager {
             return this.app.log.express('Express disabled in configuration, skipping initialization.')
         }
 
-        this.router.get('/updateActivityLog', this.updateActivityLog.bind(this))
         this.router.get('/keepAlive', this.keepAlive.bind(this))
         this.router.post('/updateKey', this.updateKey.bind(this))
 
@@ -70,8 +66,6 @@ class ExpressManager {
 
     authenticate(request, response, next) {
         try {
-            this.app.log.express(`Incoming request from ${request.ip} to ${request.originalUrl} method: ${request.method}`)
-
             next()
         } catch (error) {
             this.app.log.error(error)
@@ -95,10 +89,6 @@ class ExpressManager {
                             reason: 'Malformed Body'
                         })
                     }
-                    next()
-                    break
-
-                case 'updateActivityLog':
                     next()
                     break
 
@@ -177,13 +167,6 @@ class ExpressManager {
                 reason: 'An internal server error occurred'
             })
         }
-    }
-
-    async updateActivityLog(request, response) {
-        new this.activityLog(this).initialize()
-        return response.status(200).json({
-            success: true
-        })
     }
 }
 

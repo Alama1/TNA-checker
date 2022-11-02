@@ -23,7 +23,7 @@ class inactivityCheckCommand {
             .setDescription('Boop')
             .setColor('#FFFF00')
 
-        await interaction.reply({
+        await interaction.editReply({
             embeds: [startedEmbed]
         })
 
