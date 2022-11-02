@@ -43,7 +43,7 @@ class MinecraftManager {
     }
 
     async getSenitherProfileWithUUID(uuid) {
-        return this.fetchWithApiKey(`https://hypixel-api.senither.com/v1/profiles/${uuid}/weight`)
+        return this.fetchWithApiKey(`https://hypixel-skyblock-facade.alamai.repl.co/v1/profiles/${uuid}/weight`)
             .then(async r => await r.json())
             .catch(e => this.app.log.error(e.message))
     }

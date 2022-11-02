@@ -47,17 +47,17 @@ class InteractionHandler {
     }
 
     async onInteraction(interaction) {
-        if (interaction.customId !== 'configmodal' && interaction.commandName !== 'config') {
-            await interaction.deferReply({
-                ephemeral: true
-            })
-        }
+
         switch (interaction.type) {
             case InteractionType.ApplicationCommand:
+                await interaction.deferReply()
                 break
             case InteractionType.ModalSubmit:
                 break
             case InteractionType.MessageComponent: //Button pressed
+                await interaction.deferReply({
+                    ephemeral: true
+                })
                 let api = await this.isApiAvailable(interaction)
                 if (!api) return
                 this.discord.buttonHandler.handle(interaction)
