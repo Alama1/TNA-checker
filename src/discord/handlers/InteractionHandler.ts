@@ -121,8 +121,19 @@ class InteractionHandler {
                 if (res.success) {
                     setTimeout(async () => {
                         const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
+                        console.log(newApiStatus)
                         if (newApiStatus === 200) {
                             return true
+                        } else {
+                            let apiUnavailable = new EmbedBuilder()
+                                .setTitle('API error')
+                                .setDescription('Api key is not available right now.')
+                                .setColor('#F04947')
+                            interaction.editReply({
+                                embeds: [apiUnavailable],
+                                ephemeral: true
+                            })
+                            return false
                         }
                     }, 2000)
                 }
