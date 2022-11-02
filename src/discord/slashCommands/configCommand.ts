@@ -70,7 +70,7 @@ class createButtonCommand {
 
         replyEmbed
             .addFields(changedProperties)
-        interaction.editReply({ content: 'Boop!', embeds: [replyEmbed] })
+        interaction.reply({ content: 'Boop!', embeds: [replyEmbed] })
     }
 }
 
