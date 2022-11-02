@@ -117,7 +117,12 @@ class InteractionHandler {
                 const res = await fetch(this.discord.app.config.properties.discord.apiNewURL)
                     .then(async r => await r.json())
                 if (res.success) {
-                    return true
+                    setTimeout(async () => {
+                        const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
+                        if (newApiStatus.status === 200) {
+                            return true
+                        }
+                    }, 2000)
                 }
             } catch (e) {
                 let apiUnavailable = new EmbedBuilder()
