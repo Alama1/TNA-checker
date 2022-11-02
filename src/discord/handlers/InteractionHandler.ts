@@ -122,7 +122,7 @@ class InteractionHandler {
                 const res = await fetch(this.discord.app.config.properties.discord.apiNewURL)
                     .then(async r => await r.json())
                 if (res.success) {
-                    setTimeout(async () => {
+                    await setTimeout(async () => {
                         const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
                         if (newApiStatus === 200) {
                             isAvailable = true
