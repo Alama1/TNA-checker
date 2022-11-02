@@ -47,7 +47,7 @@ class InteractionHandler {
     }
 
     async onInteraction(interaction) {
-        if (interaction.customId !== 'configmodal' && interaction.customId !== 'config') {
+        if (interaction.customId !== 'configmodal' && interaction.commandName !== 'config') {
             await interaction.deferReply({
                 ephemeral: true
             })
