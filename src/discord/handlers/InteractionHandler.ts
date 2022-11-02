@@ -59,7 +59,6 @@ class InteractionHandler {
                 break
             case InteractionType.MessageComponent: //Button pressed
                 let api = await this.isApiAvailable(interaction)
-                console.log(api)
                 if (!api) return
                 this.discord.buttonHandler.handle(interaction)
                 return

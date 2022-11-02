@@ -32,7 +32,7 @@ class ExpressManager {
     }
 
     async updateKey(request, response) {
-        this.app.log.express(`New key request. Body: ${request.body}`)
+        this.app.log.express(`New key request. Body: ${JSON.stringify(request.body)}`)
 
         const key = request.body.key
         let apiKeyAvailable = await fetch(`https://api.hypixel.net/key?key=${key}`)

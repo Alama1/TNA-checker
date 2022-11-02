@@ -38,6 +38,7 @@ class DiscordCheck {
             .setColor('#FFFF00')
 
         await interaction.editReply({
+            ephemeral: false,
             embeds: [startedEmbed]
         })
 
@@ -48,6 +49,7 @@ class DiscordCheck {
                         .setColor('#FFFF00')
                         .setAuthor({ name: `Loading members. ${index}/${guildMembers.length}` })
                     interaction.editReply({
+                        ephemeral: false,
                         embeds: [progressEmbed]
                     })
                 }
@@ -60,6 +62,7 @@ class DiscordCheck {
                         .setColor('#FFFF00')
                         .setAuthor({ name: `Done! Fixing player ranks...` })
                     interaction.editReply({
+                        ephemeral: false,
                         embeds: [progressEmbed]
                     })
                     this.processMembers(uuidAndRank, interaction)

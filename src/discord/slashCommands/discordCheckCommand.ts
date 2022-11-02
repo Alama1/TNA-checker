@@ -43,6 +43,7 @@ class DiscordCheck {
             .setDescription('Boop')
             .setColor('#FFFF00')
         await interaction.editReply({
+            ephemeral: false,
             embeds: [startedEmbed]
         })
 
@@ -69,6 +70,7 @@ class DiscordCheck {
                 .setColor('#FFFF00')
             if (index%5 === 0) {
                 interaction.editReply({
+                    ephemeral: false,
                     embeds: [loadingMembersEmbed]
                 })
             }
@@ -92,6 +94,7 @@ class DiscordCheck {
             .setDescription('Fixing ranks')
             .setColor('#FFFF00')
         interaction.editReply({
+            ephemeral: false,
             embeds: [loadingFinishedEmbed]
         })
 
@@ -165,6 +168,7 @@ class DiscordCheck {
             returnEmbed.addFields(membersChangedArray)
         }
         interaction.editReply({
+            ephemeral: false,
             embeds: embedsToReturn
         })
     }

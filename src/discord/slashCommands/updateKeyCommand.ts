@@ -20,6 +20,7 @@ class inactivityCheckCommand {
                     .setTitle('Done!')
                     .setColor('#0099ff')
                 interaction.editReply({
+                    ephemeral: false,
                     embeds: [returnEmbed]
                 })
             }

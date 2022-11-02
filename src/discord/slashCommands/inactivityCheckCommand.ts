@@ -24,6 +24,7 @@ class inactivityCheckCommand {
             .setColor('#FFFF00')
 
         await interaction.editReply({
+            ephemeral: false,
             embeds: [startedEmbed]
         })
 
@@ -39,6 +40,7 @@ class inactivityCheckCommand {
                     .setColor('#FFFF00')
                     .setAuthor({ name: `Loading members. ${membersCount}/${guildMembers.length}` })
                 interaction.editReply({
+                    ephemeral: false,
                     embeds: [membersProgress]
                 })
             }
@@ -58,6 +60,7 @@ class inactivityCheckCommand {
             .setColor('#FFFF00')
             .setAuthor({ name: `Loading members done.` })
         interaction.editReply({
+            ephemeral: false,
             embeds: [loadingMembersDone]
         })
 
@@ -89,6 +92,7 @@ class inactivityCheckCommand {
         finalEmbed.addFields(finalFields)
 
         interaction.editReply({
+            ephemeral: false,
             embeds: [finalEmbed]
         })
     }
