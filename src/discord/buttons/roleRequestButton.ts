@@ -25,10 +25,6 @@ class RoleRequestButton {
         this.necronRole = interaction.guild.roles.cache.find(r => r.id === this.discord.app.config.properties.discord.necronRole)
         this.eliteRole = interaction.guild.roles.cache.find(r => r.id === this.discord.app.config.properties.discord.eliteRole)
 
-        await interaction.deferReply({
-            ephemeral: true
-        })
-
         let memberUsername = interaction.member.nickname ? interaction.member.nickname : interaction.member.user.username
         const memberUUID = await this.minecraftManager.getMinecraftUUID(memberUsername)
 

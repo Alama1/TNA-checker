@@ -15,7 +15,6 @@ class createButtonCommand {
     }
 
     async onCommand(interaction) {
-        await interaction.deferReply()
         let username = interaction.options._hoistedOptions[0].value
         const senitherProfile = await this.discord.interactionHandler.minecraftManager.getSenitherProfile(username)
 
