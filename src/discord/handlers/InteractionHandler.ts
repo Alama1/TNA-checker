@@ -59,6 +59,7 @@ class InteractionHandler {
                 break
             case InteractionType.MessageComponent: //Button pressed
                 let api = await this.isApiAvailable(interaction)
+                console.log(api)
                 if (!api) return
                 this.discord.buttonHandler.handle(interaction)
                 return
@@ -114,6 +115,7 @@ class InteractionHandler {
     }
 
     async isApiAvailable(interaction) {
+        let isAvailable = false
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
         if (apiStatus === 403) {
             try {
@@ -123,13 +125,13 @@ class InteractionHandler {
                     setTimeout(async () => {
                         const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
                         if (newApiStatus === 200) {
-                            return true
+                            isAvailable = true
                         } else {
                             let apiUnavailable = new EmbedBuilder()
                                 .setTitle('API error')
                                 .setDescription('Api key is not available right now.')
                                 .setColor('#F04947')
-                            interaction.editReply({
+                            await interaction.editReply({
                                 embeds: [apiUnavailable],
                                 ephemeral: true
                             })
@@ -142,7 +144,7 @@ class InteractionHandler {
                     .setTitle('API error')
                     .setDescription('Api key is not available right now.')
                     .setColor('#F04947')
-                interaction.editReply({
+                await interaction.editReply({
                     embeds: [apiUnavailable],
                     ephemeral: true
                 })
@@ -159,7 +161,9 @@ class InteractionHandler {
             })
             return false
         }
-        return apiStatus === 200
+        console.log('got here')
+        if (apiStatus == 200) isAvailable = true
+        return isAvailable
     }
 }
 module.exports = InteractionHandler
