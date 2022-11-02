@@ -115,30 +115,21 @@ class InteractionHandler {
     }
 
     async isApiAvailable(interaction) {
-        let isAvailable = false
         const apiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
+
+        if(apiStatus === 200) {
+            return true
+        }
+
         if (apiStatus === 403) {
             try {
-                const res = await fetch(this.discord.app.config.properties.discord.apiNewURL)
-                    .then(async r => await r.json())
-                if (res.success) {
-                    await setTimeout(async () => {
-                        const newApiStatus = (await this.minecraftManager.checkApiKeyAvailability()).status
-                        if (newApiStatus === 200) {
-                            isAvailable = true
-                        } else {
-                            let apiUnavailable = new EmbedBuilder()
-                                .setTitle('API error')
-                                .setDescription('Api key is not available right now.')
-                                .setColor('#F04947')
-                            await interaction.editReply({
-                                embeds: [apiUnavailable],
-                                ephemeral: true
-                            })
-                            return false
+                await fetch(this.discord.app.config.properties.discord.apiNewURL)
+                    .then(async r => {
+                        const res = await r.json()
+                        if (res.success) {
+                            return true
                         }
-                    }, 2000)
-                }
+                    })
             } catch (e) {
                 let apiUnavailable = new EmbedBuilder()
                     .setTitle('API error')
@@ -148,6 +139,7 @@ class InteractionHandler {
                     embeds: [apiUnavailable],
                     ephemeral: true
                 })
+                return false
             }
         }
         if (apiStatus === 429) {
@@ -161,9 +153,6 @@ class InteractionHandler {
             })
             return false
         }
-        console.log('got here')
-        if (apiStatus == 200) isAvailable = true
-        return isAvailable
     }
 }
 module.exports = InteractionHandler
