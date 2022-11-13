@@ -20,7 +20,7 @@
     "necronRole": "972569840734834798",
     "eliteRole": "972569900465934486",
     "discordStaff": "959773260390756382",
-    "apiNewURL":  "https://tnabridge.onrender.com/api/apinew"
+    "apiNewURL":  "https://TNAFridge.alamai.repl.co/api/apinew"
   },
   "express": {
     "enabled": true,
