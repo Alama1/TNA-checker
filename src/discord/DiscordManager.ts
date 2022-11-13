@@ -4,6 +4,7 @@ import path from "path";
 const StateHandler = require('./handlers/StateHandler')
 const InteractionHandler = require('./handlers/InteractionHandler')
 const ButtonHandler = require('./handlers/ButtonHandler')
+const GuildStatsHandler = require('./handlers/guildStatsHandler')
 const { Client, IntentsBitField } = require('discord.js')
 class DiscordManager  {
     private app: any;
@@ -11,6 +12,7 @@ class DiscordManager  {
     private client: typeof Client;
     private interactionHandler: typeof InteractionHandler;
     private buttonHandler: typeof ButtonHandler;
+    private guildStatsHandler: typeof ButtonHandler;
     cataLevelExp: Object
     constructor(app) {
 
@@ -36,6 +38,7 @@ class DiscordManager  {
             this.stateHandler.onReady()
             this.interactionHandler = new InteractionHandler(this)
             this.buttonHandler = new ButtonHandler(this)
+            new GuildStatsHandler(this).onReady()
         })
 
         this.client.on('interactionCreate', interaction => {
