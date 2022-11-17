@@ -131,6 +131,7 @@ class InteractionHandler {
                         }
                     })
             } catch (e) {
+                console.log(e.message)
                 let apiUnavailable = new EmbedBuilder()
                     .setTitle('API error')
                     .setDescription('Api key is not available right now.')
