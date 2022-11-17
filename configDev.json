@@ -20,7 +20,7 @@
     "necronRole": "972569840734834798",
     "eliteRole": "972569900465934486",
     "discordStaff": "959773260390756382",
-    "apiNewURL":  "74.208.95.168:8880/api/apinew"
+    "apiNewURL":  "http://74.208.95.168:8880/api/apinew"
   },
   "express": {
     "enabled": true,
