@@ -1,6 +1,5 @@
 const interactionHandler = require('../handlers/InteractionHandler')
 const minecraftManager = require('../../minecraft/minecraftManager')
-const fetch = require('node-fetch')
 const {EmbedBuilder} = require('discord.js')
 export {}
 
