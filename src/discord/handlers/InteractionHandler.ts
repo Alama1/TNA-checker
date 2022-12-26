@@ -50,6 +50,9 @@ class InteractionHandler {
 
         switch (interaction.type) {
             case InteractionType.ApplicationCommand:
+                if(interaction.commandName === 'config') {
+                    break
+                }
                 await interaction.deferReply()
                 break
             case InteractionType.ModalSubmit:
