@@ -58,5 +58,5 @@ class ButtonsHandler {
         }
     }
 }
-
+export{}
 module.exports = ButtonsHandler

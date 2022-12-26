@@ -1,6 +1,5 @@
 const { EmbedBuilder } = require('discord.js')
 const minecraftManager = require('../../minecraft/minecraftManager')
-export {}
 
 class RoleRequestButton {
     private bridgeBotChannel: any;
@@ -174,4 +173,5 @@ class RoleRequestButton {
     }
 }
 
+export{}
 module.exports = RoleRequestButton

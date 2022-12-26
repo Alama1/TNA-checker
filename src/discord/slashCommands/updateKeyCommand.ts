@@ -13,7 +13,7 @@ class inactivityCheckCommand {
 
     async onCommand(interaction) {
         try {
-            const res = await fetch('https://tna-bridge.herokuapp.com/api/apinew').then(async r => await r.json())
+            const res = await fetch(this.discord.app.config.properties.discord.apiNewURL).then(async r => await r.json())
             if (res.success === true) {
                 const returnEmbed = new EmbedBuilder()
                 returnEmbed
