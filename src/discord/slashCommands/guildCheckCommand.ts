@@ -41,37 +41,54 @@ class DiscordCheck {
             embeds: [startedEmbed]
         })
 
+        let loadedMembers = []
+
         guildMembers.forEach((member, index) => {
-            setTimeout(async () => {
-                if (index % 5 === 0) {
-                    const progressEmbed = new EmbedBuilder()
-                        .setColor('#FFFF00')
-                        .setAuthor({ name: `Loading members. ${index}/${guildMembers.length}` })
-                    interaction.editReply({
-                        ephemeral: false,
-                        embeds: [progressEmbed]
-                    })
-                }
-                if (member.rank.toLowerCase() === 'guild master' || member.rank === 'STAFF') return
-                const senitherProfile = await this.minecraftManager.getSenitherProfileWithUUID(member.uuid)
-                if (senitherProfile.status !== 200) return
-                uuidAndRank.push({uuid: member.uuid, rank: member.rank, weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow })
-                if (index + 1 === guildMembers.length) {
-                    const progressEmbed = new EmbedBuilder()
-                        .setColor('#FFFF00')
-                        .setAuthor({ name: `Done! Fixing player ranks...` })
-                    interaction.editReply({
-                        ephemeral: false,
-                        embeds: [progressEmbed]
-                    })
-                    this.processMembers(uuidAndRank, interaction)
-                }
-            }, index * 1000)
+            loadedMembers.push(
+                this.delay(index * 1000).then(async r => {
+                        if (index % 5 === 0) {
+                            const progressEmbed = new EmbedBuilder()
+                                .setColor('#FFFF00')
+                                .setAuthor({name: `Loading members. ${index}/${guildMembers.length}`})
+                            interaction.editReply({
+                                ephemeral: false,
+                                embeds: [progressEmbed]
+                            })
+                        }
+                        if (member.rank.toLowerCase() === 'guild master' || member.rank === 'STAFF') return
+                        const senitherProfile = await this.minecraftManager.getSenitherProfileWithUUID(member.uuid)
+                        if (senitherProfile.status !== 200) return
+                        uuidAndRank.push({
+                            uuid: member.uuid,
+                            rank: member.rank,
+                            weight: senitherProfile.data.weight + senitherProfile.data.weight_overflow
+                        })
+                    }
+                ))
         })
+        await Promise.all(loadedMembers).then(r => {
+            const progressEmbed = new EmbedBuilder()
+                .setColor('#FFFF00')
+                .setAuthor({ name: `Done! Fixing player ranks...` })
+            interaction.editReply({
+                ephemeral: false,
+                embeds: [progressEmbed]
+            })
+            this.processMembers(uuidAndRank, interaction)
+        })
+    }
+
+    async delay(ms) {
+        return new Promise<void>((resolve, reject) => {
+            setTimeout(() => {
+                resolve();
+            }, ms)
+        });
     }
 
 
     async processMembers(membersList, interaction) {
+        console.log('E')
         let membersToChange = []
         let returnFields = []
         const bridgeBotChannel = await this.discord.client.channels.fetch(this.bridgeBotChannel)
